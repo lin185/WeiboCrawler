@@ -3,6 +3,7 @@
 
 from Tkinter import *
 from Login import Login
+from datetime import datetime
 
 
 provinces = ['All', 'Beijing', 'Zhejiang', 'Shanghai']
@@ -10,9 +11,7 @@ cities = [['All'], ['Chaoyang', 'Xuanwu'], ['Wenzhou', 'Hangzhou'], ['Xuhui', 'P
 
 
 def update_province(currProvince):
-    print currProvince
     index = provinces.index(currProvince)
-    print index
     clist = cities[index]
     m = cMenu.children['menu']
     m.delete(0, 'end')
@@ -52,9 +51,32 @@ def login_callback():
 
 
 def search_callback():
+    keyword = searchinput.get().encode("utf-8")
+    time_from = timeinputfromText.get()
+    time_to = timeinputtoText.get()
+    province = pList.get()
+    city = cList.get()
 
+    # validate input
+    if time_from == "YYYY-MM-DD":
+        time_from = ""
+    elif validate_date(time_from) == False:
+        print "Time From format error."
+        return
+    if time_to == "YYYY-MM-DD":
+        time_to = ""
+    elif validate_date(time_to) == False:
+        print "Time To format error."
+        return
+    
     return
 
+def validate_date(d):
+    try:
+        datetime.strptime(d, '%Y-%m-%d')
+        return True
+    except ValueError:
+        return False
 
 
 # root gui
