@@ -1,63 +1,69 @@
+# Weibo Search GUI
+#   Author: Binhao Lin
+
 from Tkinter import *
 from Login import Login
 
-'''
-def update_agelist(currage):
-    print currage
 
-    menu = toption['menu']
-    menu.delete(0, 'end')
-    for age in range(int(currage), AGELIMIT):
-        menu.add_command(label=age, command=Tkinter._setit(target, age))
+provinces = ['All', 'Beijing', 'Zhejiang', 'Shanghai']
+cities = [['All'], ['Chaoyang', 'Xuanwu'], ['Wenzhou', 'Hangzhou'], ['Xuhui', 'Pudong']]
 
-    target.set(currage)
 
+def update_province(currProvince):
+    print currProvince
+    index = provinces.index(currProvince)
+    print index
+    clist = cities[index]
+    m = cMenu.children['menu']
+    m.delete(0, 'end')
+    for city in clist:
+        m.add_command(label=city, command=lambda temp = city: cMenu.setvar(cMenu.cget("textvariable"), value = temp))
     return
-'''
+
 
 
 def login_callback():
-    # print usernameInput.get()
-    # print passwordInput.get()
-
+    # Try login
     login_component = Login(usernameInput.get(), passwordInput.get())
     ret = login_component.login()
+    ret = 1
 
-    
+        
+    # Check if login failed
     if ret == 0:
         # ERROR
+        print "Login ERROR!"
         return
-    
-    #print login_component.username
-    #print login_component.password
-    print "Login OK!"
-    
-    '''
-    # loginFrame.destroy()
-    
-    frame1 = Frame()
-    frame1.pack(fill=X)
-            
-    searchlabel = Label(frame1, text="Search for: ")          
-    searchlabel.grid(row=1)
-    searchinput = Entry(frame1, width=45)
-    searchinput.grid(row=1, column=1)
-    '''
-    
+
+    # Set search GUI visible
+    loginFrame.destroy()
+    msg.pack()  
+    searchlabel.grid(row=0)
+    searchinput.grid(row=0, column=1)
+    timelabelfrom.grid(row=1, sticky=W)
+    timeinputfrom.grid(row=1, column=1, sticky=W)
+    timelabelto.grid(row=1, column=2, sticky=W)
+    timeinputto.grid(row=1, column=3, sticky=W)
+    locationlabel.grid(row=2)
+    pMenu.grid(row=2, column=1)
+    cMenu.grid(row=2, column=2)
+    searchButton.pack()
     return
 
 
+def search_callback():
+
+    return
 
 
 
 # root gui
 root = Tk()
 root.title("Weibo Search")
-root.geometry("500x500")
+root.geometry("400x150")
 
 
-
-# Login Frame
+# Login Frame - visible 
 loginFrame = Frame()
 loginFrame.pack(fill=X)
 usernameLabel = Label(loginFrame, text="Username")  
@@ -67,68 +73,59 @@ passwordInput = Entry(loginFrame, show="*", width=25)
 loginBotton = Button(loginFrame, text="Login", command=login_callback)
 usernameLabel.grid(row=0, column=0)
 usernameInput.grid(row=0, column=1)
-passwordLabel.grid(row=0, column=2)
-passwordInput.grid(row=0, column=3)
-loginBotton.grid(row=0, column=4)
+passwordLabel.grid(row=1, column=0)
+passwordInput.grid(row=1, column=1)
+loginBotton.grid(row=2, column=0)
 
 
 
-# search input box
 
-'''
+# Construct the search GUI
+# Search GUI - invisible initailize, only visible after successfully logged in
+
+msgFrame = Frame()
+msgFrame.pack(fill=X)
+msg = Label(msgFrame, text="Login Successful!")
+#msg.pack()  
+
+
 frame1 = Frame()
 frame1.pack(fill=X)
-        
 searchlabel = Label(frame1, text="Search for: ")          
-searchlabel.grid(row=0)
 searchinput = Entry(frame1, width=45)
-searchinput.grid(row=0, column=1)
+#searchlabel.grid(row=0)
+#searchinput.grid(row=0, column=1)
 
 
 frame2 = Frame()
 frame2.pack(fill=X)
 timelabelfrom = Label(frame2, text="Time From: ")
-timelabelfrom.grid(row=1, sticky=W)
 timeinputfromText = StringVar()
 timeinputfromText.set("YYYY-MM-DD")
 timeinputfrom = Entry(frame2, width=20, textvariable=timeinputfromText)
-timeinputfrom.grid(row=1, column=1, sticky=W)
-
-
-
+#timelabelfrom.grid(row=1, sticky=W)
+#timeinputfrom.grid(row=1, column=1, sticky=W)
 
 timelabelto  = Label(frame2, text="To: ")
-timelabelto.grid(row=1, column=2, sticky=W)
 timeinputtoText = StringVar()
 timeinputtoText.set("YYYY-MM-DD")
 timeinputto = Entry(frame2, width=20, textvariable=timeinputtoText)
-timeinputto.grid(row=1, column=3, sticky=W)
+#timelabelto.grid(row=1, column=2, sticky=W)
+#timeinputto.grid(row=1, column=3, sticky=W)
 
 
 frame3 = Frame()
 frame3.pack(fill=X)
 locationlabel = Label(frame3, text="Location: ")
-locationlabel.grid(row=2)
+pList = StringVar(value=provinces[0])
+pMenu = OptionMenu(frame3, pList, *provinces, command=update_province)
+cList = StringVar(value=cities[0][0])
+cMenu = OptionMenu(frame3, cList, *cities[0])
+#locationlabel.grid(row=2)
+#pMenu.grid(row=2, column=1)
+#cMenu.grid(row=2, column=2)
 
-
-
-frame4 = Frame()
-frame4.pack(fill=X)
-AGELIMIT = 95
-AGEOPT = [str(i) for i in range(AGELIMIT)]
-current = StringVar(value='0')
-coption = OptionMenu(frame4, current, *AGEOPT, command=update_agelist)
-coption.grid(row=3)
-'''
-
-
-'''
-variable = StringVar(root)
-variable.set(OPTIONS[0]) # default value
-
-w = apply(OptionMenu, (root, variable) + tuple(OPTIONS))
-w.pack()
-'''
-
+searchButton = Button(root, text="Search", command=search_callback)
+#searchButton.pack()
 
 root.mainloop()

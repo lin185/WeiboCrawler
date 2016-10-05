@@ -30,7 +30,7 @@ class Login:
 	#	Return 1 if login succeed, also set the cookie
 	def login(self):
 		print "TODO: Login.py Implementation."
-
+		
 
 		return 0
 
