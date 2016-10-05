@@ -1,18 +1,52 @@
 from Tkinter import *
+from Login import Login
 
-
-
+'''
 def update_agelist(currage):
     print currage
-    '''
+
     menu = toption['menu']
     menu.delete(0, 'end')
     for age in range(int(currage), AGELIMIT):
         menu.add_command(label=age, command=Tkinter._setit(target, age))
 
     target.set(currage)
-    '''
+
     return
+'''
+
+
+def login_callback():
+    # print usernameInput.get()
+    # print passwordInput.get()
+
+    login_component = Login(usernameInput.get(), passwordInput.get())
+    ret = login_component.login()
+
+    
+    if ret == 0:
+        # ERROR
+        return
+    
+    #print login_component.username
+    #print login_component.password
+    print "Login OK!"
+    
+    '''
+    # loginFrame.destroy()
+    
+    frame1 = Frame()
+    frame1.pack(fill=X)
+            
+    searchlabel = Label(frame1, text="Search for: ")          
+    searchlabel.grid(row=1)
+    searchinput = Entry(frame1, width=45)
+    searchinput.grid(row=1, column=1)
+    '''
+    
+    return
+
+
 
 
 
@@ -21,18 +55,27 @@ root = Tk()
 root.title("Weibo Search")
 root.geometry("500x500")
 
+
+
+# Login Frame
+loginFrame = Frame()
+loginFrame.pack(fill=X)
+usernameLabel = Label(loginFrame, text="Username")  
+usernameInput = Entry(loginFrame, width=25)
+passwordLabel = Label(loginFrame, text="Password") 
+passwordInput = Entry(loginFrame, show="*", width=25)
+loginBotton = Button(loginFrame, text="Login", command=login_callback)
+usernameLabel.grid(row=0, column=0)
+usernameInput.grid(row=0, column=1)
+passwordLabel.grid(row=0, column=2)
+passwordInput.grid(row=0, column=3)
+loginBotton.grid(row=0, column=4)
+
+
+
 # search input box
+
 '''
-searchlabel = Label(root, text="Search for: ")
-searchlabel.pack(padx=5, pady=10, side=LEFT)
-searchbox = Text(root, height=1, width=50)
-searchbox.pack(padx=5, pady=10, side=LEFT)
-
-timelabel = Label(root, text="Time From: ")
-timelabel.pack()
-'''
-
-
 frame1 = Frame()
 frame1.pack(fill=X)
         
@@ -76,7 +119,7 @@ AGEOPT = [str(i) for i in range(AGELIMIT)]
 current = StringVar(value='0')
 coption = OptionMenu(frame4, current, *AGEOPT, command=update_agelist)
 coption.grid(row=3)
-
+'''
 
 
 '''
