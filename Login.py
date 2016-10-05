@@ -1,3 +1,11 @@
+# 1. Open Google Chrome
+# 2. shift + ctrl + i
+# 3. Go to Network, then check Preserve log
+# 4. Enter the url: m.weibo.cn
+# 5. Enter your username and password to login
+# 6. On the right hand side, find the entry with name m.weibo.com
+# 7. The field Cookie is what we need
+
 class Login:
 	## Variables:
 
@@ -22,8 +30,8 @@ class Login:
 	#	Return 1 if login succeed, also set the cookie
 	def login(self):
 		print "TODO: Login.py Implementation."
-		
-		
+
+
 		return 0
 
 	# Other functions you may need
