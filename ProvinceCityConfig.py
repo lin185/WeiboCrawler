@@ -39,5 +39,8 @@ class ProvinceCityConfig:
 
 
 	def getCitiesOfProvince(slef, province_id):
+		# ['All', 'Wenzhou', 'Hangzhou', ....]
+		return
 
+	def getLISTFROMWEIBO():
 		return

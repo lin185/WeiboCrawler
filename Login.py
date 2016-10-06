@@ -97,12 +97,12 @@ class Login:
 		cookies = requests.get(urlnew).cookies
 
 		print(cookies)
-
+		# cookies = "_T_WM=6b43304b1466ecd5dfaf282fa1ff8a45; SCF=Akf4IIjoxf9QnnQbCvz1chZKf6-_WDFs18tfmz4UvLI-2a6c49RqVKLBeVtb62mK1tIoZ3HZn5GPi5A9hW2MHCQ.; SUB=_2A2568SfPDeTxGedH61MQ8SbMyDmIHXVWGkmHrDV6PUJbkdBeLVT9kW1LHZLQ5nTcOcBGBF74_DDr5EiKXQ..; SUHB=0V5UvrcJ_CfZde; M_WEIBOCN_PARAMS=uicode%3D20000061%26featurecode%3D20000180%26fid%3D4027746504090576%26oid%3D4027746504090576; H5_INDEX=3; H5_INDEX_TITLE=LucasLinBh"
 		return 1
 
 	# Other functions you may need
 
 
 # -- test code start here --
-t = Login("vera","xu");
-t.login();
+#t = Login("vera","xu");
+#t.login();

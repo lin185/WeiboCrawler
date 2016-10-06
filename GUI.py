@@ -24,7 +24,7 @@ def update_province(currProvince):
 def login_callback():
     # Try login
     login_component = Login(usernameInput.get(), passwordInput.get())
-    ret = login_component.login()
+    #ret = login_component.login()
     ret = 1
 
         
