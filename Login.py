@@ -11,6 +11,8 @@ import requests
 import re
 import rsa
 import binascii
+import time
+
 
 class Login:
 	## Variables:
@@ -24,30 +26,31 @@ class Login:
 	## Functions:
 
 	# Login Consturctor
-	def __init__(self, username, password):
-		self.username = username
-		self.password = password
+	def __init__(self):
+		return
+
 
 
 	# Actual Login function
 	#	Use the username and password to log into weibo, and get the cookie
 	#	Return 0 if login failed
 	#	Return 1 if login succeed, also set the cookie
-	def login(self):
-		print "TODO: Login.py Implementation."
-		print "Login.py gets cookie"
+	def login(self, username, password):
+		# print "TODO: Login.py Implementation."
+		# print "Login.py gets cookie"
 		
 		# -- Hanye 10/05/2016
 		# ref: http://m.blog.csdn.net/article/details?id=48396545
 		# ref: http://www.jianshu.com/p/36a39ea71bfd
 
-		username = raw_input(u'Login Name:') # type in su and sp for testing
-		password = raw_input(u'Password:')
+		# username = raw_input(u'Login Name:') # type in su and sp for testing
+		# password = raw_input(u'Password:')
 
 		url = 'http://login.sina.com.cn/sso/prelogin.php?entry=sso&callback=sinaSSOController.preloginCallBack&su=%s&rsakt=mod&client=ssologin.js(v1.4.4)%'+username
 		#url = http://login.sina.com.cn/sso/prelogin.phpentry=weibo&callback=sinaSSOController.preloginCallBack&su=yourusername&rsakt=mod&checkpin=1&client=ssologin.js(v1.4.11)
-
+		# print url
 		html = requests.get(url).content
+		# time.sleep(10)
 
 		servertime = re.findall('"servertime":(.*?),',html,re.S)[0]
 		nonce = re.findall('"nonce":"(.*?)"',html,re.S)[0]
@@ -86,7 +89,7 @@ class Login:
 	        }
 		
 		html = requests.post(login_url,data=data).content
-		#print(html)
+		# print(html)
 		urltemp = re.findall('location.replace\(\'(.*?)\'',html,re.S)
 		if(len(urltemp) == 0):
 			print("login failed")
@@ -95,10 +98,9 @@ class Login:
 			urlnew = urltemp[0]
 		#urlnew = re.findall('location.replace\(\'(.*?)\'',html,re.S)[0]
 		cookies = requests.get(urlnew).cookies
-
 		print(cookies)
-		# cookies = "_T_WM=6b43304b1466ecd5dfaf282fa1ff8a45; SCF=Akf4IIjoxf9QnnQbCvz1chZKf6-_WDFs18tfmz4UvLI-2a6c49RqVKLBeVtb62mK1tIoZ3HZn5GPi5A9hW2MHCQ.; SUB=_2A2568SfPDeTxGedH61MQ8SbMyDmIHXVWGkmHrDV6PUJbkdBeLVT9kW1LHZLQ5nTcOcBGBF74_DDr5EiKXQ..; SUHB=0V5UvrcJ_CfZde; M_WEIBOCN_PARAMS=uicode%3D20000061%26featurecode%3D20000180%26fid%3D4027746504090576%26oid%3D4027746504090576; H5_INDEX=3; H5_INDEX_TITLE=LucasLinBh"
-		return 1
+
+		return cookies
 
 	# Other functions you may need
 
@@ -106,3 +108,20 @@ class Login:
 # -- test code start here --
 #t = Login("vera","xu");
 #t.login();
+
+t = Login();
+
+temp = open('./WeiboAccounts','r').read().split('\n')
+for line in temp:
+	info = line.split(' ')
+	username = info[0]
+	password = info[1]
+	print username
+	print password
+	t.login(username, password)
+
+
+
+
+
+
