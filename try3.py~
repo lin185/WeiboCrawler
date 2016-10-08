@@ -1,0 +1,6 @@
+from ProvinceCityConfig import ProvinceCityConfig
+
+if __name__ == '__main__':
+
+	ProvinceCityConfig()
+	a = getProinceList()
