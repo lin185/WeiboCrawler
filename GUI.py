@@ -5,18 +5,24 @@ from Tkinter import *
 from Login import Login
 from datetime import datetime
 
+from ProvinceCityConfig import ProvinceCityConfig
 
-provinces = ['All', 'Beijing', 'Zhejiang', 'Shanghai']
-cities = [['All'], ['Chaoyang', 'Xuanwu'], ['Wenzhou', 'Hangzhou'], ['Xuhui', 'Pudong']]
+
+#provinces = ['All', 'Beijing', 'Zhejiang', 'Shanghai']
+#cities = [['All'], ['Chaoyang', 'Xuanwu'], ['Wenzhou', 'Hangzhou'], ['Xuhui', 'Pudong']]
 
 
 def update_province(currProvince):
-    index = provinces.index(currProvince)
-    clist = cities[index]
+    pid = pcconfig.getProvinceID(currProvince)
+    print pid
+    clist = pcconfig.getCitiesOfProvince(pid)
     m = cMenu.children['menu']
     m.delete(0, 'end')
     for city in clist:
+        #m.add_command(label=city, command=lambda: var.set(city))
         m.add_command(label=city, command=lambda temp = city: cMenu.setvar(cMenu.cget("textvariable"), value = temp))
+    #m.variable_a.set('a')
+    cMenu.set(clist[0])
     return
 
 
@@ -77,6 +83,12 @@ def validate_date(d):
 
 cookies = ["<<class 'requests.cookies.RequestsCookieJar'>[<Cookie ALF=1507830797 for .weibo.com/>, <Cookie SCF=AmrMZ9utXGGnkPCEZA5_l3AnL9WgHGdWK98tr3fnog4m4Tq4DK-GY9P7AOaXsmz1WQiIu352x_DnihahiOSVx7w. for .weibo.com/>, <Cookie SUB=_2A256-gjeDeTxGeNH4lcT8SvFzT2IHXVZjn0WrDV8PUNbktANLWuskW8ZE7NnSiWVAhULa5iysywdoJ6sMQ.. for .weibo.com/>, <Cookie SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9W5_eRLFeSu7TG91QqTCvR8i5JpX5K2hUgL.Fo-41K-EeK-4So22dJLoI0.LxKnLBoMLB-qLxK-L12BLBK2LxKqL1KqLB-qLxKMLBK.LB.2LxKnL12BLBK2LxKnL12BLBK27eh-t for .weibo.com/>, <Cookie SUHB=0vJICjD2bB7C8h for .weibo.com/>, <Cookie TC-Ugrow-G0=0149286e34b004ccf8a0b99657f15013 for weibo.com/>]>"]
 print cookies[0]
+
+
+# Initialize Province and city lists
+pcconfig = ProvinceCityConfig()
+provinces = pcconfig.getProvinceList()
+cities = [['城市/地区']]
 
 # Construct the search GUI
 root = Tk()
