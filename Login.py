@@ -109,16 +109,16 @@ class Login:
 #t = Login("vera","xu");
 #t.login();
 
-t = Login();
+# t = Login();
 
-temp = open('./WeiboAccounts','r').read().split('\n')
-for line in temp:
-	info = line.split(' ')
-	username = info[0]
-	password = info[1]
-	print username
-	print password
-	t.login(username, password)
+# temp = open('./WeiboAccounts','r').read().split('\n')
+# for line in temp:
+# 	info = line.split(' ')
+# 	username = info[0]
+# 	password = info[1]
+# 	print username
+# 	print password
+# 	t.login(username, password)
 
 
 

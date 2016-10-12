@@ -37,16 +37,7 @@ def login_callback():
     # Set search GUI visible
     loginFrame.destroy()
     msg.pack()  
-    searchlabel.grid(row=0)
-    searchinput.grid(row=0, column=1)
-    timelabelfrom.grid(row=1, sticky=W)
-    timeinputfrom.grid(row=1, column=1, sticky=W)
-    timelabelto.grid(row=1, column=2, sticky=W)
-    timeinputto.grid(row=1, column=3, sticky=W)
-    locationlabel.grid(row=2)
-    pMenu.grid(row=2, column=1)
-    cMenu.grid(row=2, column=2)
-    searchButton.pack()
+    
     return
 
 
@@ -79,63 +70,39 @@ def validate_date(d):
         return False
 
 
-# root gui
-root = Tk()
-root.title("Weibo Search")
-root.geometry("400x150")
+# Auto login, get cookies
+# t = Login();
+# cookie = t.login("0017654187943","woshibh111")
+# print cookie
 
-
-# Login Frame - visible 
-loginFrame = Frame()
-loginFrame.pack(fill=X)
-usernameLabel = Label(loginFrame, text="Username")  
-usernameInput = Entry(loginFrame, width=25)
-passwordLabel = Label(loginFrame, text="Password") 
-passwordInput = Entry(loginFrame, show="*", width=25)
-loginBotton = Button(loginFrame, text="Login", command=login_callback)
-usernameLabel.grid(row=0, column=0)
-usernameInput.grid(row=0, column=1)
-passwordLabel.grid(row=1, column=0)
-passwordInput.grid(row=1, column=1)
-loginBotton.grid(row=2, column=0)
-
-
-
+cookies = ["<<class 'requests.cookies.RequestsCookieJar'>[<Cookie ALF=1507830797 for .weibo.com/>, <Cookie SCF=AmrMZ9utXGGnkPCEZA5_l3AnL9WgHGdWK98tr3fnog4m4Tq4DK-GY9P7AOaXsmz1WQiIu352x_DnihahiOSVx7w. for .weibo.com/>, <Cookie SUB=_2A256-gjeDeTxGeNH4lcT8SvFzT2IHXVZjn0WrDV8PUNbktANLWuskW8ZE7NnSiWVAhULa5iysywdoJ6sMQ.. for .weibo.com/>, <Cookie SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9W5_eRLFeSu7TG91QqTCvR8i5JpX5K2hUgL.Fo-41K-EeK-4So22dJLoI0.LxKnLBoMLB-qLxK-L12BLBK2LxKqL1KqLB-qLxKMLBK.LB.2LxKnL12BLBK2LxKnL12BLBK27eh-t for .weibo.com/>, <Cookie SUHB=0vJICjD2bB7C8h for .weibo.com/>, <Cookie TC-Ugrow-G0=0149286e34b004ccf8a0b99657f15013 for weibo.com/>]>"]
+print cookies[0]
 
 # Construct the search GUI
-# Search GUI - invisible initailize, only visible after successfully logged in
+root = Tk()
+root.title("Weibo Search")
+root.geometry("400x100")
 
-msgFrame = Frame()
-msgFrame.pack(fill=X)
-msg = Label(msgFrame, text="Login Successful!")
-#msg.pack()  
-
-
+# search box
 frame1 = Frame()
 frame1.pack(fill=X)
 searchlabel = Label(frame1, text="Search for: ")          
 searchinput = Entry(frame1, width=45)
-#searchlabel.grid(row=0)
-#searchinput.grid(row=0, column=1)
 
-
+# time box
 frame2 = Frame()
 frame2.pack(fill=X)
 timelabelfrom = Label(frame2, text="Time From: ")
 timeinputfromText = StringVar()
 timeinputfromText.set("YYYY-MM-DD")
 timeinputfrom = Entry(frame2, width=20, textvariable=timeinputfromText)
-#timelabelfrom.grid(row=1, sticky=W)
-#timeinputfrom.grid(row=1, column=1, sticky=W)
 
 timelabelto  = Label(frame2, text="To: ")
 timeinputtoText = StringVar()
 timeinputtoText.set("YYYY-MM-DD")
 timeinputto = Entry(frame2, width=20, textvariable=timeinputtoText)
-#timelabelto.grid(row=1, column=2, sticky=W)
-#timeinputto.grid(row=1, column=3, sticky=W)
 
-
+# province and city lists
 frame3 = Frame()
 frame3.pack(fill=X)
 locationlabel = Label(frame3, text="Location: ")
@@ -143,11 +110,21 @@ pList = StringVar(value=provinces[0])
 pMenu = OptionMenu(frame3, pList, *provinces, command=update_province)
 cList = StringVar(value=cities[0][0])
 cMenu = OptionMenu(frame3, cList, *cities[0])
-#locationlabel.grid(row=2)
-#pMenu.grid(row=2, column=1)
-#cMenu.grid(row=2, column=2)
 
+# search button
 searchButton = Button(root, text="Search", command=search_callback)
-#searchButton.pack()
 
+# Set GUI visible
+searchlabel.grid(row=0)
+searchinput.grid(row=0, column=1)
+timelabelfrom.grid(row=1, sticky=W)
+timeinputfrom.grid(row=1, column=1, sticky=W)
+timelabelto.grid(row=1, column=2, sticky=W)
+timeinputto.grid(row=1, column=3, sticky=W)
+locationlabel.grid(row=2)
+pMenu.grid(row=2, column=1)
+cMenu.grid(row=2, column=2)
+searchButton.pack()
+
+# start running
 root.mainloop()
