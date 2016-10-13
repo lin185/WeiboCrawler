@@ -46,22 +46,22 @@ class ProvinceCityConfig:
 	#Get province id given its name
 	def getProvinceID(self, province_name):
 
-		return self.province_id[self.province.index(province_name)]
+		return self.province_id[self.province.index(province_name.encode('utf-8'))]
 
 	#Get province name given its id
 	def getProvinceName(self, province_number):
 
-		return self.province[self.province_id.index(province_number)]
+		return self.province[self.province_id.index(province_number)].decode('utf-8')
 
 	#Get city id given the name of provicne and city
 	def getCityID(self, province_name, city_name):
 
-		return self.city_id[self.province.index(province_name)][self.city[self.province.index(province_name)].index(city_name)]
+		return self.city_id[self.province.index(province_name.encode('utf-8'))][self.city[self.province.index(province_name.encode('utf-8'))].index(city_name.encode('utf-8'))]
 
 	#Get city name given the id of province and city
 	def getCityName(self, province_number, city_number):
 
-		return self.city[self.province_id.index(province_number)][self.city_id[self.province_id.index(province_number)].index(city_number)]
+		return self.city[self.province_id.index(province_number)][self.city_id[self.province_id.index(province_number)].index(city_number)].decode('utf-8')
 
 	#Get names of cities in a given province
 	def getCitiesOfProvince(self, province_number):
