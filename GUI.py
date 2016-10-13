@@ -1,5 +1,7 @@
+# -*- coding: utf-8 -*-
 # Weibo Search GUI
 #   Author: Binhao Lin
+
 
 from Tkinter import *
 from Login import Login
@@ -14,15 +16,17 @@ from ProvinceCityConfig import ProvinceCityConfig
 
 def update_province(currProvince):
     pid = pcconfig.getProvinceID(currProvince)
-    print pid
     clist = pcconfig.getCitiesOfProvince(pid)
     m = cMenu.children['menu']
     m.delete(0, 'end')
     for city in clist:
-        #m.add_command(label=city, command=lambda: var.set(city))
         m.add_command(label=city, command=lambda temp = city: cMenu.setvar(cMenu.cget("textvariable"), value = temp))
-    #m.variable_a.set('a')
-    cMenu.set(clist[0])
+    cList.set(clist[0])
+
+
+    # print pid, pcconfig.getProvinceName(pid)
+
+
     return
 
 
@@ -51,10 +55,16 @@ def search_callback():
     keyword = searchinput.get().encode("utf-8")
     time_from = timeinputfromText.get()
     time_to = timeinputtoText.get()
-    province = pList.get()
-    city = cList.get()
-
+    province = pList.get().encode("utf-8")
+    city = cList.get().encode("utf-8")
+    print province
+    print city
+    
     # validate input
+    if len(keyword) == 0:
+        print "Input is empty"
+        return
+
     if time_from == "YYYY-MM-DD":
         time_from = ""
     elif validate_date(time_from) == False:
@@ -66,7 +76,67 @@ def search_callback():
         print "Time To format error."
         return
     
+    url_list = GenerateURLs(keyword, time_from, time_to, province, city)
+
+
+
+
+
     return
+
+
+
+
+def GenerateURLs(keyword, time_from, time_to, province_name, city_name):
+    # Without any specifications:
+    #   http://s.weibo.com/weibo/lush&suball=1&Refer=g
+    # With Time specification:
+    #   http://s.weibo.com/weibo/%25E5%258D%2581%25E5%25AD%2597%25E6%259E%25B6&typeall=1&suball=1&timescope=custom:2016-10-05:&Refer=g
+    #   http://s.weibo.com/weibo/%25E5%258D%2581%25E5%25AD%2597%25E6%259E%25B6&typeall=1&suball=1&timescope=custom::2016-10-10&Refer=g
+    #   http://s.weibo.com/weibo/lush&typeall=1&suball=1&timescope=custom:2016-10-03:2016-10-05&Refer=g
+    # With region (province only) specification:
+    #   http://s.weibo.com/weibo/lush&region=custom:34:1000&typeall=1&suball=1&Refer=g
+    # With region (both province and bity) specification:
+    #   http://s.weibo.com/weibo/lush&region=custom:34:2&typeall=1&suball=1&Refer=g
+    # With time and region specifications:
+    #   http://s.weibo.com/weibo/lush&region=custom:34:2&typeall=1&suball=1&timescope=custom:2016-10-01:2016-10-12&Refer=g
+    #   http://s.weibo.com/weibo/%25E5%258D%2581%25E5%25AD%2597%25E6%259E%25B6&region=custom:11:1&typeall=1&suball=1&timescope=custom:2015-10-07:2016-10-12&Refer=g
+    #   http://s.weibo.com/weibo/%25E5%258D%2581%25E5%25AD%2597%25E6%259E%25B6&region=custom:11:1&typeall=1&suball=1&timescope=custom:2015-10-07:2016-10-12&page=2
+    
+    pid = pcconfig.getProvinceID(province_name)
+    cid = pcconfig.getCityID(province_name, city_name)
+    print province_name, pid
+    print city_name, cid
+
+    url = "http://s.weibo.com/weibo/"
+    url += keyword + "&typeall=1" + "&suball=1"
+    if len(time_from) > 0 and len(time_to) > 0:
+        url += "&timescope=custom:" + time_from + ":" + time_to
+    elif len(time_from) > 0:
+        url += "&timescope=custom:" + time_from + ":"
+    elif len(time_to) > 0:
+        url += "&timescope=custom::" + time_to
+
+
+    # if province_id == 0: # all province
+    #     # list all the possibilities
+    #     province_list = []
+    #     for p in provinces:
+    #         pid = pcconfig.getProvinceID(p)
+    #         if pid != 0:
+    #             province_list.add(pid)
+    #             print p, pid
+
+    # else:
+
+    #     url += "&region=custom:" + province_id
+    # print url
+
+
+
+    return
+
+
 
 def validate_date(d):
     try:
@@ -93,7 +163,7 @@ cities = [['城市/地区']]
 # Construct the search GUI
 root = Tk()
 root.title("Weibo Search")
-root.geometry("400x100")
+# root.geometry("400x100")
 
 # search box
 frame1 = Frame()
