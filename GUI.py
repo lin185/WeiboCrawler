@@ -47,12 +47,9 @@ def search_callback():
     
     url_list = GenerateURLs(keyword, time_from, time_to, province, city)
 
-
     crawler = Crawler(url_list, cookies)
-    # for url in url_list:
-    #     print url
+    crawler.start()
 
-    # 十字架
     return
 
 
@@ -101,7 +98,7 @@ def GenerateURLs(keyword, time_from, time_to, province_name, city_name):
                     cid = pcconfig.getCityID(p.decode('utf-8'), c.decode('utf-8'))
                     if cid != '0' and cid != '1000':
                         print "(",pid, p.decode('utf-8'),")", "(",cid, c.decode('utf-8'),")"
-                        url_list.append(url+"&region=custom:"+pid+":"+cid)
+                        url_list.append(url+"&region=custom:"+pid+":"+cid+"&")
     else:   # only one province
         if city_id == '0' or city_id == '1000': # all cities
             cities = pcconfig.getCitiesOfProvince(province_id)
@@ -109,10 +106,10 @@ def GenerateURLs(keyword, time_from, time_to, province_name, city_name):
                 cid = pcconfig.getCityID(province_name, c.decode('utf-8'))
                 if cid != '0' and cid != '1000':
                     print "(",province_id, province_name,")", "(",cid, c.decode('utf-8'),")"
-                    url_list.append(url+"&region=custom:"+province_id+":"+cid)
+                    url_list.append(url+"&region=custom:"+province_id+":"+cid+"&")
         else:   # one city
             print "(",province_id, province_name,")", "(",city_id, city_name,")"
-            url_list.append(url+"&region=custom:"+province_id+":"+city_id)
+            url_list.append(url+"&region=custom:"+province_id+":"+city_id+"&")
 
     return url_list
 
@@ -127,13 +124,18 @@ def validate_date(d):
 
 
 # Auto login, get cookies
+
 cookies = []
 lines = open("./WeiboAccounts",'r').read().split('\n')
 for line in lines:
+    # skip those accounts that are commented out 
+    if line.startswith("#"):
+        continue
     info = line.split(' ')
     username = info[0]
     password = info[1]
     # print username, password
+    # log in and get cookie
     user = Login(username, password)
     user.callLogin()
     cookies.append(user.cookie)
@@ -194,4 +196,3 @@ searchButton.pack()
 
 # start running
 root.mainloop()
-
