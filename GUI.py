@@ -35,15 +35,25 @@ def search_callback():
         return
 
     if time_from == "YYYY-MM-DD":
-        time_from = ""
+        # weibo launched on Aug 14, 2009.
+        time_from = "2009-08-14"
     elif validate_date(time_from) == False:
         print "Time From format error."
         return
+
     if time_to == "YYYY-MM-DD":
-        time_to = ""
+        # current date
+        time_to = datetime.now().strftime("%Y-%m-%d")
     elif validate_date(time_to) == False:
         print "Time To format error."
         return
+
+    start_date = datetime.strptime(time_from, "%Y-%m-%d")
+    end_date = datetime.now().strptime(time_to, "%Y-%m-%d")
+    if(end_date <= start_date):
+        print "Invalid time range, please check."
+        return
+
     
     url_list = GenerateURLs(keyword, time_from, time_to, province, city)
 
