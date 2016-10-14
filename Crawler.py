@@ -18,42 +18,30 @@ class Crawler:
 	# ]
 
 	cookies = []
-
-	url_list = [
-	"http://s.weibo.com/weibo/十字架&region=custom:44:1&typeall=1&suball=1&timescope=custom:2016-08-01:2016-10-01",# 6 pages
-	"http://s.weibo.com/weibo/十字架&region=custom:44:2&typeall=1&suball=1&timescope=custom:2016-08-01:2016-10-01",# 1 page
-	"http://s.weibo.com/weibo/十字架&region=custom:44:3&typeall=1&suball=1&timescope=custom:2016-08-01:2016-10-01",# 5 pages
-	"http://s.weibo.com/weibo/十字架&region=custom:44:4&typeall=1&suball=1&timescope=custom:2016-08-01:2016-10-01",# 1 pages
-	"http://s.weibo.com/weibo/十字架&region=custom:44:5&typeall=1&suball=1&timescope=custom:2016-08-01:2016-10-01",# 1 pages
-	"http://s.weibo.com/weibo/十字架&region=custom:44:6&typeall=1&suball=1&timescope=custom:2016-08-01:2016-10-01",# 3 pages
-	"http://s.weibo.com/weibo/十字架&region=custom:44:7&typeall=1&suball=1&timescope=custom:2016-08-01:2016-10-01",# 2 pages
-	"http://s.weibo.com/weibo/十字架&region=custom:44:8&typeall=1&suball=1&timescope=custom:2016-08-01:2016-10-01",# 1 pages
-	"http://s.weibo.com/weibo/十字架&region=custom:44:9&typeall=1&suball=1&timescope=custom:2016-08-01:2016-10-01",# 1 pages
-	"http://s.weibo.com/weibo/十字架&region=custom:44:51&typeall=1&suball=1&timescope=custom:2016-10-01:2016-10-01"# 0 page
-	]
+	url_list = []
+	
+	# url_list = [
+	# "http://s.weibo.com/weibo/十字架&region=custom:44:1&typeall=1&suball=1&timescope=custom:2016-08-01:2016-10-01",# 6 pages
+	# "http://s.weibo.com/weibo/十字架&region=custom:44:2&typeall=1&suball=1&timescope=custom:2016-08-01:2016-10-01",# 1 page
+	# "http://s.weibo.com/weibo/十字架&region=custom:44:3&typeall=1&suball=1&timescope=custom:2016-08-01:2016-10-01",# 5 pages
+	# "http://s.weibo.com/weibo/十字架&region=custom:44:4&typeall=1&suball=1&timescope=custom:2016-08-01:2016-10-01",# 1 pages
+	# "http://s.weibo.com/weibo/十字架&region=custom:44:5&typeall=1&suball=1&timescope=custom:2016-08-01:2016-10-01",# 1 pages
+	# "http://s.weibo.com/weibo/十字架&region=custom:44:6&typeall=1&suball=1&timescope=custom:2016-08-01:2016-10-01",# 3 pages
+	# "http://s.weibo.com/weibo/十字架&region=custom:44:7&typeall=1&suball=1&timescope=custom:2016-08-01:2016-10-01",# 2 pages
+	# "http://s.weibo.com/weibo/十字架&region=custom:44:8&typeall=1&suball=1&timescope=custom:2016-08-01:2016-10-01",# 1 pages
+	# "http://s.weibo.com/weibo/十字架&region=custom:44:9&typeall=1&suball=1&timescope=custom:2016-08-01:2016-10-01",# 1 pages
+	# "http://s.weibo.com/weibo/十字架&region=custom:44:51&typeall=1&suball=1&timescope=custom:2016-10-01:2016-10-01"# 0 page
+	# ]
 
 	folder_path = ""
 	## Functions:
 
 	# Constructor
-	def __init__(self):
+	def __init__(self, url_list, cookies):
 		# print "TODO: Crawler Initialization"
 
-		user1 = Login("17192006343","q1314120")
-		user1.callLogin()
-		self.cookies.append(user1.cookie)
-
-		user2 = Login("17191631495","a123456")
-		user2.callLogin()
-		self.cookies.append(user2.cookie)
-
-
-		user3 = Login("17192006340","q1314120")
-		user3.callLogin()
-		self.cookies.append(user3.cookie)
-
-
-
+		self.url_list = url_list
+		self.cookies = cookies
 
 		num_of_cookies = len(self.cookies) # 3
 		num_of_urls = len(self.url_list) # 10
@@ -156,4 +144,4 @@ class Crawler:
 # test
 
 
-c = Crawler()
+# c = Crawler()

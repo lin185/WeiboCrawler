@@ -229,20 +229,3 @@ class Login():
     #username = "*****"
     #password = "*****"
     login(username, password)'''
-
-
-# -- test  code  starts  here  ---
-# user1 = Login("17192006343","q1314120")
-# user1.callLogin()
-# print(user1.cookie)
-# print("----------")
-
-# user2 = Login("17191631495","a123456")
-# user2.callLogin()
-# print(user2.cookie)
-# print("----------")
-
-# user3 = Login("17192006340","q1314120")
-# user3.callLogin()
-# print(user3.cookie)
-# print("----------")

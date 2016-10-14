@@ -8,58 +8,27 @@ from Login import Login
 from datetime import datetime
 
 from ProvinceCityConfig import ProvinceCityConfig
+from Crawler import Crawler
 
 
-#provinces = ['All', 'Beijing', 'Zhejiang', 'Shanghai']
-#cities = [['All'], ['Chaoyang', 'Xuanwu'], ['Wenzhou', 'Hangzhou'], ['Xuhui', 'Pudong']]
-
-
-def update_province(currProvince):
-    pid = pcconfig.getProvinceID(currProvince)
+def update_province_callback(currProvince):
+    pid = pcconfig.getProvinceID(currProvince.decode('utf-8'))
     clist = pcconfig.getCitiesOfProvince(pid)
     m = cMenu.children['menu']
     m.delete(0, 'end')
     for city in clist:
         m.add_command(label=city, command=lambda temp = city: cMenu.setvar(cMenu.cget("textvariable"), value = temp))
     cList.set(clist[0])
-
-
-    # print pid, pcconfig.getProvinceName(pid)
-
-
-    return
-
-
-
-def login_callback():
-    # Try login
-    login_component = Login(usernameInput.get(), passwordInput.get())
-    #ret = login_component.login()
-    ret = 1
-
-        
-    # Check if login failed
-    if ret == 0:
-        # ERROR
-        print "Login ERROR!"
-        return
-
-    # Set search GUI visible
-    loginFrame.destroy()
-    msg.pack()  
-    
     return
 
 
 def search_callback():
-    keyword = searchinput.get().encode("utf-8")
+    keyword = searchinput.get()
     time_from = timeinputfromText.get()
     time_to = timeinputtoText.get()
-    province = pList.get().encode("utf-8")
-    city = cList.get().encode("utf-8")
-    print province
-    print city
-    
+    province = pList.get()
+    city = cList.get()
+
     # validate input
     if len(keyword) == 0:
         print "Input is empty"
@@ -79,9 +48,11 @@ def search_callback():
     url_list = GenerateURLs(keyword, time_from, time_to, province, city)
 
 
+    crawler = Crawler(url_list, cookies)
+    # for url in url_list:
+    #     print url
 
-
-
+    # 十字架
     return
 
 
@@ -102,11 +73,14 @@ def GenerateURLs(keyword, time_from, time_to, province_name, city_name):
     #   http://s.weibo.com/weibo/lush&region=custom:34:2&typeall=1&suball=1&timescope=custom:2016-10-01:2016-10-12&Refer=g
     #   http://s.weibo.com/weibo/%25E5%258D%2581%25E5%25AD%2597%25E6%259E%25B6&region=custom:11:1&typeall=1&suball=1&timescope=custom:2015-10-07:2016-10-12&Refer=g
     #   http://s.weibo.com/weibo/%25E5%258D%2581%25E5%25AD%2597%25E6%259E%25B6&region=custom:11:1&typeall=1&suball=1&timescope=custom:2015-10-07:2016-10-12&page=2
-    
-    pid = pcconfig.getProvinceID(province_name)
-    cid = pcconfig.getCityID(province_name, city_name)
-    print province_name, pid
-    print city_name, cid
+    # print "GenerateURLs"
+
+    url_list = []
+
+    province_id = pcconfig.getProvinceID(province_name)
+    city_id = pcconfig.getCityID(province_name, city_name)
+    # print province_name, province_id
+    # print city_name, city_id
 
     url = "http://s.weibo.com/weibo/"
     url += keyword + "&typeall=1" + "&suball=1"
@@ -118,23 +92,29 @@ def GenerateURLs(keyword, time_from, time_to, province_name, city_name):
         url += "&timescope=custom::" + time_to
 
 
-    # if province_id == 0: # all province
-    #     # list all the possibilities
-    #     province_list = []
-    #     for p in provinces:
-    #         pid = pcconfig.getProvinceID(p)
-    #         if pid != 0:
-    #             province_list.add(pid)
-    #             print p, pid
+    if province_id == '0': # all province
+        for p in provinces:
+            pid = pcconfig.getProvinceID(p.decode('utf-8'))
+            if pid != '0':
+                cities = pcconfig.getCitiesOfProvince(pid)
+                for c in cities:
+                    cid = pcconfig.getCityID(p.decode('utf-8'), c.decode('utf-8'))
+                    if cid != '0' and cid != '1000':
+                        print "(",pid, p.decode('utf-8'),")", "(",cid, c.decode('utf-8'),")"
+                        url_list.append(url+"&region=custom:"+pid+":"+cid)
+    else:   # only one province
+        if city_id == '0' or city_id == '1000': # all cities
+            cities = pcconfig.getCitiesOfProvince(province_id)
+            for c in cities:
+                cid = pcconfig.getCityID(province_name, c.decode('utf-8'))
+                if cid != '0' and cid != '1000':
+                    print "(",province_id, province_name,")", "(",cid, c.decode('utf-8'),")"
+                    url_list.append(url+"&region=custom:"+province_id+":"+cid)
+        else:   # one city
+            print "(",province_id, province_name,")", "(",city_id, city_name,")"
+            url_list.append(url+"&region=custom:"+province_id+":"+city_id)
 
-    # else:
-
-    #     url += "&region=custom:" + province_id
-    # print url
-
-
-
-    return
+    return url_list
 
 
 
@@ -193,7 +173,7 @@ frame3 = Frame()
 frame3.pack(fill=X)
 locationlabel = Label(frame3, text="Location: ")
 pList = StringVar(value=provinces[0])
-pMenu = OptionMenu(frame3, pList, *provinces, command=update_province)
+pMenu = OptionMenu(frame3, pList, *provinces, command=update_province_callback)
 cList = StringVar(value=cities[0][0])
 cMenu = OptionMenu(frame3, cList, *cities[0])
 
