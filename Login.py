@@ -181,7 +181,7 @@ class Login():
         else:
             pcid = sever_data["pcid"]
             self.get_cha(pcid)
-            postdata['door'] = input(u"请输入验证码")
+            postdata['door'] = input(u"Enter captcha: ")
             login_page = session.post(login_url, data=postdata, headers=headers)
 
         newlogin_page = login_page.content
@@ -232,17 +232,17 @@ class Login():
 
 
 # -- test  code  starts  here  ---
-user1 = Login("17192006343","q1314120")
-user1.callLogin()
-print(user1.cookie)
-print("----------")
+# user1 = Login("17192006343","q1314120")
+# user1.callLogin()
+# print(user1.cookie)
+# print("----------")
 
-user2 = Login("17191631495","a123456")
-user2.callLogin()
-print(user2.cookie)
-print("----------")
+# user2 = Login("17191631495","a123456")
+# user2.callLogin()
+# print(user2.cookie)
+# print("----------")
 
-user3 = Login("17192006340","q1314120")
-user3.callLogin()
-print(user3.cookie)
-print("----------")
+# user3 = Login("17192006340","q1314120")
+# user3.callLogin()
+# print(user3.cookie)
+# print("----------")
