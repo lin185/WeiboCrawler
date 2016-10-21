@@ -43,7 +43,7 @@ class Crawler:
 			# for url in urls:
 			# 	print url.decode('utf-8')
 			# print "----------"
-			self.threads.append( threading.Thread(target=self.crawl, args=(str(i))) ) 
+			self.threads.append( threading.Thread(target=self.crawl, args=([str(i)])) ) 
 
 		return
 
@@ -64,7 +64,7 @@ class Crawler:
 	def crawl(self, cookie_id_str):
 		# print "TODO: Crawl Implementation"
 		thread_id = str(threading.current_thread().name)
-		cookie_id = int(cookie_id_str)
+		cookie_id = int(cookie_id_str[0])
 		cookie = self.cookies[cookie_id]
 
 		while 1:
@@ -93,8 +93,9 @@ class Crawler:
 
 				html = requests.get(final_url, cookies = cookie).content
 
-				sleeptime = random.randint(10, 25)
-				print thread_id, 'sleeps for ' + str(sleeptime) + ' seconds...'
+				sleeptime = random.randint(15, 25)
+				Logger.write(thread_id + ' sleeps for ' + str(sleeptime) + ' seconds...', 1)
+				# print thread_id, 'sleeps for ' + str(sleeptime) + ' seconds...'
 				time.sleep(sleeptime)
 
 				# check has next page
@@ -107,11 +108,15 @@ class Crawler:
 						f.write(html)
 
 					if ('class=\\"page next S_txt1 S_line1\\">\\u4e0b\\u4e00\\u9875' in html):
-						# has 下一页
+						# has next page
 						pagenum += 1
-					else:
-						# No 下一页
+					elif ('<div class=\\"feed_lists W_texta\\" node-type=\\"feed_list\\">' in html):
+						# has context, but no next page
 						break
+					else:
+						# no context and no next page: ERROR
+						# try agian
+						Logger.write(thread_id + "download page error, try again.", 1)
 
 		return
 

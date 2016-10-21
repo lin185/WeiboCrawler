@@ -58,9 +58,12 @@ def search_callback():
     
     url_list = GenerateURLs(keyword, time_from, time_to, province, city)
     Logger.write("Base urls: ", 1)
+    # print "Base urls: "
     ct = 1
     for url in url_list:
-        Logger.write( str(ct) + ": " + url, 0)
+        string = str(ct) + ": " + url
+        Logger.write( string, 0)
+        # print string
         ct += 1
 
     crawler = Crawler(url_list, cookies, keyword)
