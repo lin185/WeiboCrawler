@@ -5,11 +5,12 @@
 
 from Tkinter import *
 from Login import Login
-from datetime import datetime
+import datetime
 
 from ProvinceCityConfig import ProvinceCityConfig
 from Crawler import Crawler
-
+from Parser import Parser
+import Logger as Logger
 
 def update_province_callback(currProvince):
     pid = pcconfig.getProvinceID(currProvince.decode('utf-8'))
@@ -43,24 +44,32 @@ def search_callback():
 
     if time_to == "YYYY-MM-DD":
         # current date
-        time_to = datetime.now().strftime("%Y-%m-%d")
+        time_to = datetime.datetime.now().strftime("%Y-%m-%d")
     elif validate_date(time_to) == False:
         print "Time To format error."
         return
 
-    start_date = datetime.strptime(time_from, "%Y-%m-%d")
-    end_date = datetime.now().strptime(time_to, "%Y-%m-%d")
+    start_date = datetime.datetime.strptime(time_from, "%Y-%m-%d")
+    end_date = datetime.datetime.now().strptime(time_to, "%Y-%m-%d")
     if(end_date <= start_date):
         print "Invalid time range, please check."
         return
 
     
     url_list = GenerateURLs(keyword, time_from, time_to, province, city)
+    Logger.write("Base urls: ", 1)
+    ct = 1
+    for url in url_list:
+        Logger.write( str(ct) + ": " + url, 0)
+        ct += 1
 
+    crawler = Crawler(url_list, cookies, keyword)
+    crawler.start()
 
-    crawler = Crawler(url_list, cookies)
-    # for url in url_list:
-    #     print url
+    Logger.write("Parser started.", 1)
+    parser = Parser(crawler.folder_path)
+    parser.parse(pcconfig)
+    Logger.write("Parser finished.", 1)
 
     # 十字架
     return
@@ -94,35 +103,50 @@ def GenerateURLs(keyword, time_from, time_to, province_name, city_name):
 
     url = "http://s.weibo.com/weibo/"
     url += keyword + "&typeall=1" + "&suball=1"
-    if len(time_from) > 0 and len(time_to) > 0:
-        url += "&timescope=custom:" + time_from + ":" + time_to
-    elif len(time_from) > 0:
-        url += "&timescope=custom:" + time_from + ":"
-    elif len(time_to) > 0:
-        url += "&timescope=custom::" + time_to
 
 
-    if province_id == '0': # all province
-        for p in provinces:
-            pid = pcconfig.getProvinceID(p.decode('utf-8'))
-            if pid != '0':
-                cities = pcconfig.getCitiesOfProvince(pid)
+
+    start_date = datetime.datetime.strptime(time_from, "%Y-%m-%d")
+    end_date = datetime.datetime.now().strptime(time_to, "%Y-%m-%d")
+    date = start_date
+    delta = 366 # 6 months
+
+    while(date < end_date):
+
+        # add timescope parameter
+        newdate = date + datetime.timedelta(days=delta)
+        if newdate < end_date:
+            date_param = "&timescope=custom:" + date.strftime("%Y-%m-%d") + ":" + newdate.strftime("%Y-%m-%d")
+        else:
+            date_param = "&timescope=custom:" + date.strftime("%Y-%m-%d") + ":" + end_date.strftime("%Y-%m-%d")
+        url_with_timescope = url + date_param
+
+        # avoid one day duplication between two time frames
+        date = newdate + datetime.timedelta(days=1)
+
+
+        # add region parameter
+        if province_id == '0': # all province
+            for p in provinces:
+                pid = pcconfig.getProvinceID(p.decode('utf-8'))
+                if pid != '0':
+                    cities = pcconfig.getCitiesOfProvince(pid)
+                    for c in cities:
+                        cid = pcconfig.getCityID(p.decode('utf-8'), c.decode('utf-8'))
+                        if cid != '0' and cid != '1000':
+                            # print "(",pid, p.decode('utf-8'),")", "(",cid, c.decode('utf-8'),")"
+                            url_list.append(url_with_timescope+"&region=custom:"+pid+":"+cid+"&")
+        else:   # only one province
+            if city_id == '0' or city_id == '1000': # all cities
+                cities = pcconfig.getCitiesOfProvince(province_id)
                 for c in cities:
-                    cid = pcconfig.getCityID(p.decode('utf-8'), c.decode('utf-8'))
+                    cid = pcconfig.getCityID(province_name, c.decode('utf-8'))
                     if cid != '0' and cid != '1000':
-                        print "(",pid, p.decode('utf-8'),")", "(",cid, c.decode('utf-8'),")"
-                        url_list.append(url+"&region=custom:"+pid+":"+cid)
-    else:   # only one province
-        if city_id == '0' or city_id == '1000': # all cities
-            cities = pcconfig.getCitiesOfProvince(province_id)
-            for c in cities:
-                cid = pcconfig.getCityID(province_name, c.decode('utf-8'))
-                if cid != '0' and cid != '1000':
-                    print "(",province_id, province_name,")", "(",cid, c.decode('utf-8'),")"
-                    url_list.append(url+"&region=custom:"+province_id+":"+cid)
-        else:   # one city
-            print "(",province_id, province_name,")", "(",city_id, city_name,")"
-            url_list.append(url+"&region=custom:"+province_id+":"+city_id)
+                        # print "(",province_id, province_name,")", "(",cid, c.decode('utf-8'),")"
+                        url_list.append(url_with_timescope+"&region=custom:"+province_id+":"+cid+"&")
+            else:   # one city
+                # print "(",province_id, province_name,")", "(",city_id, city_name,")"
+                url_list.append(url_with_timescope+"&region=custom:"+province_id+":"+city_id+"&")
 
     return url_list
 
@@ -130,23 +154,35 @@ def GenerateURLs(keyword, time_from, time_to, province_name, city_name):
 
 def validate_date(d):
     try:
-        datetime.strptime(d, '%Y-%m-%d')
+        datetime.datetime.strptime(d, '%Y-%m-%d')
         return True
     except ValueError:
         return False
 
 
+
+
+
+
+
+
 # Auto login, get cookies
+
 cookies = []
 lines = open("./WeiboAccounts",'r').read().split('\n')
 for line in lines:
+    # skip those accounts that are commented out 
+    if line.startswith("#"):
+        continue
     info = line.split(' ')
     username = info[0]
     password = info[1]
     # print username, password
+    # log in and get cookie
     user = Login(username, password)
     user.callLogin()
     cookies.append(user.cookie)
+Logger.write( "Login successful ( " + str(len(cookies)) + " cookies).", 1 )
 
 
 # Initialize Province and city lists
@@ -154,10 +190,11 @@ pcconfig = ProvinceCityConfig()
 provinces = pcconfig.getProvinceList()
 cities = [['城市/地区']]
 
+
 # Construct the search GUI
 root = Tk()
 root.title("Weibo Search")
-# root.geometry("400x100")
+
 
 # search box
 frame1 = Frame()
@@ -202,6 +239,26 @@ pMenu.grid(row=2, column=1)
 cMenu.grid(row=2, column=2)
 searchButton.pack()
 
+
+# Apparently a common hack to get the window size. Temporarily hide the
+# window to avoid update_idletasks() drawing the window in the wrong
+# position.
+root.withdraw()
+root.update_idletasks()  # Update "requested size" from geometry manager
+
+x = (root.winfo_screenwidth() - root.winfo_reqwidth()) / 2
+y = (root.winfo_screenheight() - root.winfo_reqheight()) / 2
+root.geometry("+%d+%d" % (x, y))
+
+# This seems to draw the window frame immediately, so only call deiconify()
+# after setting correct window position
+root.deiconify()
+
+# open the GUI at the top level
+#root.wm_attributes("-topmost", 1)
+
 # start running
 root.mainloop()
+
+
 

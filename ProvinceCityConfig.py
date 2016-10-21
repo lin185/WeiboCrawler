@@ -72,9 +72,10 @@ class ProvinceCityConfig:
 
 # Test code stard here
 
-#test = ProvinceCityConfig()
+# test = ProvinceCityConfig()
 
-#prov_list = test.getProvinceList()
+# prov_list = test.getProvinceList()
+# print len(prov_list)
 #for item in prov_list:
 #	print item.decode('utf-8') 
 
